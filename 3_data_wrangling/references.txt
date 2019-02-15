@@ -1,0 +1,10 @@
+References:
+- OSM Wiki: https://wiki.openstreetmap.org/wiki/Main_Page
+- Udacity Data Wrangling Course (Case Study: OpenStreetMap Data)
+- San Jose Wiki: https://en.wikipedia.org/wiki/San_Jose,_California
+- Regular Experssion Documentation: https://docs.python.org/2/library/re.html
+- xml.etree.ElementTree Documentation: https://docs.python.org/2/library/xml.etree.elementtree.html
+- Sample Project: https://gist.github.com/carlward/54ec1c91b62a5f911c42#file-sample_project-md
+- SQL Tutorial: https://www.w3schools.com/sql/sql_distinct.asp
+- SQL Date And Time Functions: http://sqlite.org/lang_datefunc.html
+- Markdown Cheatsheet: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet

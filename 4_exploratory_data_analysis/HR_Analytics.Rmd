@@ -1,0 +1,408 @@
+# Human Resources Analytics by Ali AlThunayian
+
+========================================================
+
+## Introduction
+
+The aim of this report is to explore an HR data which aims to understand why are our employees leave their jobs prematurely?
+First, let's see what does our dataset contain.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load the needed packages
+library(ggplot2)
+library(dplyr)
+library(GGally)
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Load_the_Data}
+# Load the Data
+df <- read.csv('HR_comma_sep.csv')
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, overview}
+# Overview of the dataset
+dim(df)
+names(df)
+str(df)
+```
+
+The dataset contains 14999 observations of 10 variables. Each row presents an employee and the variables are:
+satisfaction_level:Level of satisfaction (0-1)
+last_evaluation: Evaluation score for the employee (0-1)
+number_project: Number of projects completed while at work
+average_montly_hours: Average monthly hours at workplace
+time_spend_company: Number of years spent in the company
+Work_accident: Whether the employee had a workplace accident (1 or 0) 
+left: Whether the employee left the workplace or not (1 or 0) 
+promotion_last_5years: Whether the employee was promoted in the last five years (1 or 0) 
+sales: Department in which they work for
+salary: Relative level of salary (high) 
+
+
+# Univariate Plots Section
+
+The first variable to explore is the one that is present in the question, which is if the employee had left or not. So, I would like to know how many employees in my dataset had left. But first, I'll need to make it a factor instead of an integer.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, satisfaction_level}
+df$left <- factor(df$left) # transform integer to factor
+table(df$left) # Frequancy of each value
+sum(df$left == 1)/length(df$left) # measuring the ratio of people who left compared to the total number
+```
+
+So, 24% of employees in the dataset have left their jobs.
+Now, let's see the distribution of employees in other variables.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, satisfaction_level2}
+qplot(x=satisfaction_level, data=df,binwidth=.01) + #histogram is the default graph
+  scale_x_continuous(breaks = seq(0,1,.1)) 
+summary(df$satisfaction_level) # summary of satisfaction level
+```
+
+Although the highest 2 satisfaction scores were around .1 (10%), still most employees have satisfaction rate above .4 (40%).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, satisfaction_level3}
+qplot(x=satisfaction_level, data=df,binwidth=.01) +
+  scale_x_continuous(breaks = seq(0,1,.1)) +
+  facet_wrap(~left,ncol=1) # breakdown by if employee has left
+by(df$satisfaction_level, df$left, summary) # summary of satisfaction level based on if employee left or not
+```
+
+Most employees with very low scores had left while most employees with satisfaction level more than 50% have stayed.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, last_evaluation}
+qplot(x=last_evaluation, data=df, binwidth=.01) +
+  scale_x_continuous(breaks = seq(0,1,.1))
+summary(df$last_evaluation)
+
+```
+
+The minimum evaluation score was 36% and the two peaks are around 50% and 90% (which made the mean/median around 70%).
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, number_project}
+ggplot(aes(x = number_project), data = df) +
+  geom_histogram(breaks=seq(0,7,1))
+summary(df$number_project)
+
+```
+
+Most employees have 3 to 4 projects. The minimum number of projects is 2 and the maximum is 7.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, average_montly_hours}
+ggplot(aes(x = average_montly_hours), data = df) +
+  geom_histogram()
+summary(df$average_montly_hours)
+
+```
+
+The highest number of employees have around 150 hours/month and then around 250 hours/month. These two peaks is the reason to have the average and median at 200 hours/month.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, time_spend_company}
+ggplot(aes(x = time_spend_company), data = df) +
+  geom_histogram(breaks=seq(2,10,1))
+summary(df$time_spend_company)
+
+```
+
+75% of employees stayed 4 years or less. The minimum is 2 and the maximum is 10.
+Now, let's check the remaining categorical variables (I'll make Work_accident and promotion_last_5years as factors)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, other_var}
+df$Work_accident <- factor(df$Work_accident) # transform to a factor
+qplot(x = Work_accident, data = df) 
+
+df$promotion_last_5years <- factor(df$promotion_last_5years)
+qplot(x = promotion_last_5years, data = df) 
+
+qplot(x = reorder(sales, sales, function(x) -length(x)), data = df)
+
+# make salary an ordered factor
+df$salary = factor(df$salary,levels=c("low", "medium", "high"),ordered=TRUE)
+qplot(x = salary, data = df) 
+```
+
+Most employees have a low to medium salary, was not promoted in the last 5 years and didn't have work accidents. The highest number of staff are in Sales department.
+
+# Univariate Analysis
+
+
+### What is the structure of your dataset?
+
+The data has 14999 observations of 10 variables, which are: satisfaction_level, last_evaluation, number_project, average_montly_hours, time_spend_company, Work_accident, left, promotion_last_5years, sales and salary. 
+The binary factors are: Work_accident, left and promotion_last_5years. Salary is an ordered factor from low to high.
+
+### What is/are the main feature(s) of interest in your dataset?
+
+The purpose of this dataset is to explore the variables that cause employees to leave their jobs. I'm especially interested to explore the effect of salary and satisfaction level on the outcome.
+
+### What other features in the dataset do you think will help support your \ 
+investigation into your feature(s) of interest?
+
+All the other variables would be intersting to explore, especially the average monthly hours, time spent in the company, last evaluation score, and number of projects. There are only few employees in the dataset who were promoted in the last 5 years or had work accidents, so I'm not sure if they will be important factors.
+
+### Of the features you investigated, were there any unusual distributions? \
+Did you perform any operations on the data to tidy, adjust, or change the form \
+of the data? If so, why did you do this?
+
+I transformed the binary factors (left, promotion_last_5years and Work_accident) to factors instead of integers so it would be easier to work with later as categorical variables. I ordered salary from low to high.
+
+# Bivariate Plots Section
+
+I'm interseted to see first a comperasion between the employees who left and stayed in their satsfaction level, last evaluation and average monthly hours.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, boxplots}
+qplot(x=left, y=satisfaction_level, data=df, geom='boxplot') # draw a box plot
+by(df$satisfaction_level,df$left,summary)
+
+qplot(x=left, y=last_evaluation, data=df, geom='boxplot')
+by(df$last_evaluation,df$left,summary)
+
+qplot(x=left, y=average_montly_hours, data=df, geom='boxplot')
+by(df$average_montly_hours,df$left,summary)
+
+qplot(x=left, y=number_project, data=df, geom='boxplot')
+by(df$number_project,df$left,summary)
+
+qplot(x=left, y=time_spend_company, data=df, geom='boxplot')
+by(df$time_spend_company,df$left,summary)
+
+
+```
+
+We can see that the employees who left usually had lower satisfaction level and had more monthly working hours. While the median last evaluation is higher for the employees who left, the mean is almost the same.
+Moreover, on average, employees who left have higher number of years spent on company. Also, the majorty of employees who stayed had 3 to 4 projects.
+Now, let's check the other categorical variables.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, department}
+# count how many left or stayed per department
+ggplot(aes(sales, ..count..), data=df) + 
+  geom_bar(aes(fill = left), position = "dodge")
+
+# ratio of leaving the company per department
+ggplot(aes(sales,fill=left), data=df) + 
+  geom_bar(position = "fill")
+```
+
+The first graph shows that the highest number of employees left from Sales department. At the same time, it's the department with the highest total number of employees. So, it's better to look at the ratio of employees who left per department in the second graph, which shows that HR has slightly higher rate of employees leaving the company while Management and RandD has the lowest rate.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, salary}
+ggplot(aes(salary, ..count..), data=df) + 
+  geom_bar(aes(fill = left), position = "dodge")
+
+ggplot(aes(salary,fill=left), data=df) + 
+  geom_bar(position = "fill")
+```
+
+So, as expected, it seems that the salary plays a role in keeping employees from leaving.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, promotion}
+ggplot(aes(promotion_last_5years, ..count..), data=df) + 
+  geom_bar(aes(fill = left), position = "dodge")
+
+ggplot(aes(promotion_last_5years,fill=left), data=df) + 
+  geom_bar(position = "fill")
+```
+
+While there is only a slight number of employees who were promoted, most of them didn't leave their companies.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, accident}
+ggplot(aes(Work_accident, ..count..), data=df) + 
+  geom_bar(aes(fill = left), position = "dodge")
+
+ggplot(aes(Work_accident,fill=left), data=df) + 
+  geom_bar(position = "fill")
+```
+
+Also, while it's only a few employees who had work accidents, it seems that most of them didn't leave their company compared to the ones who didn't, which is surprising.
+Let's now the check the relation between the satisfaction and both monthly working hours and last evaluation.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Bivariate_Plots}
+ggplot(aes(x=satisfaction_level,y=last_evaluation), data=df) +
+  geom_jitter(alpha=1/5) + # jitter to better observe overplotting
+  geom_smooth(method='lm') # fit a linear model
+cor.test(df$satisfaction_level,df$last_evaluation, method='pearson') # correlation test using pearson
+
+
+ggplot(aes(x=satisfaction_level,y=average_montly_hours), data=df) +
+  geom_jitter(alpha=1/5) +
+  geom_smooth(method='lm')  
+cor.test(df$satisfaction_level,df$average_montly_hours, method='pearson') 
+
+```
+
+It doesn't seem that there are any correlation between satisfcation level and last evaluation or average hours per month. 
+
+Now, let's compare the satisfaction level for the different categorical variables.satisfaction_level, last_evaluation, number_project, average_montly_hours, time_spend_company, Work_accident, left, promotion_last_5years, sales and salary.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, boxplots2}
+qplot(x=promotion_last_5years, y=satisfaction_level, data=df, geom='boxplot')
+by(df$satisfaction_level,df$promotion_last_5years,summary)
+
+qplot(x=Work_accident, y=satisfaction_level, data=df, geom='boxplot')
+by(df$satisfaction_level,df$Work_accident,summary)
+
+qplot(x=sales, y=satisfaction_level, data=df, geom='boxplot')
+by(df$satisfaction_level,df$sales,summary)
+
+qplot(x=salary, y=satisfaction_level, data=df, geom='boxplot')
+by(df$satisfaction_level,df$salary,summary)
+```
+All these factors doesn't seem to have a big impact on the satisfaction level.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, boxplots3}
+ggplot(aes(x=factor(number_project), y=satisfaction_level), data=df) + 
+  geom_boxplot()
+by(df$satisfaction_level,df$number_project,summary)
+
+```
+
+It seems that the employees who more than 5 projects are less satisfied compared to other groups. Next, the lowest are the employees with only 2 projects.
+
+
+# Bivariate Analysis
+
+
+### Talk about some of the relationships you observed in this part of the \
+investigation. How did the feature(s) of interest vary with other features in \
+the dataset?
+
+The main focus is on understanding who are the employees who leave their jobs, and from the previous exploration it seems that the factors are: having lower satisfaction level and salary, not being promoted and having higher number of working hours and spending more time in the company. 
+It was intersting to see that the evaluation is more varied for employees who left so does the number of projects. It was also strange to see that more employees who had work accidents stayed compared to the ones who didn't.
+
+### Did you observe any interesting relationships between the other features \
+(not the main feature(s) of interest)?
+
+I found it intersting that there was no coorelation between last evaluation and satisfaction level or the average monthly working hours.
+Another intersting finding was that satisfaction level was higher for employees who had 3 to 5 projects.
+
+### What was the strongest relationship you found?
+
+The strongest relationship is between satisfaction level and if the employee stayed or not.
+
+
+# Multivariate Plots Section
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Multivariate_Plots}
+ggpairs(df) # make a matrix of plots for all variables 
+```
+
+We can see that the only moderate correlation is between the average monthly hours and number of projects. Next, between evaluation score and both number of projects and average monthly hours.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Scatter_colored}
+# scatter plot for 2 variables with color based on if employee has left
+ggplot(aes(x=satisfaction_level,y=last_evaluation, color=left), data=df) + 
+  geom_smooth(method='lm') +
+  geom_jitter(alpha=1/5)
+
+```
+
+It is strange that the group of employees with the lowest satisfaction level are with high evaluation. I'll take breakdown the results by other factors to try to understand that.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Facet_wrap}
+ggplot(aes(x=satisfaction_level,y=last_evaluation, color=left), data=df) +
+  geom_jitter(alpha=1/5) +
+  facet_wrap(~number_project) #breakdown by number of projects
+
+ggplot(aes(x=satisfaction_level,y=last_evaluation, color=left), data=df) +
+  geom_jitter(alpha=1/5) +
+  facet_wrap(~salary, ncol=1) 
+
+ggplot(aes(x=satisfaction_level,y=last_evaluation, color=left), data=df) +
+  geom_jitter(alpha=1/5) +
+  facet_wrap(~promotion_last_5years, ncol=1) 
+
+ggplot(aes(x=satisfaction_level,y=last_evaluation, color=left), data=df) +
+  geom_jitter(alpha=1/5) +
+  facet_wrap(~time_spend_company) 
+
+```
+
+
+So it seems that employees who left while having high satisfaction level and high evaluation are employees who stayed 5-6 years without being promoted. Also, for the group with the lowest satisfaction they are employees with the highest number of projects (5 to 7).
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the \
+investigation. Were there features that strengthened each other in terms of \
+looking at your feature(s) of interest?
+
+When I broke down the relationship between satisfaction and last evaluation by the other variables I started to understand better why employees leave. The three bulks of employees are mostly have low to medium with one of these factors:
+- Higher number of projects (5 to 7).
+- Lowest number of projects (2).
+- Employees who worked 5-6 years being promoted.
+
+### Were there any interesting or surprising interactions between features?
+
+I found it strange that that there was no strong correlation between any of the numberical variables and that the dadta comes in bulks. Maybe because it was simulated and the purpose is to have them independent for prediction models.
+
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_one}
+
+qplot(x=left, y=satisfaction_level, data=df, geom='boxplot',
+      main="Box Plot of Satisfaction Level for Employees Who Stayed/Left", 
+      xlab="Employee Left = 0 / Stayed = 1", ylab="Satisfaction Level (0-1)",
+      fill=I("cornsilk"), col=I("black"))
+
+qplot(x=satisfaction_level, data=df,binwidth=.01, fill=left, 
+        main="Histogram of Satisfaction Level for Employees Who Stayed/Left", 
+        xlab="Satisfaction Level (0-1)", ylab="Employees Count") +
+  scale_x_continuous(breaks = seq(0,1,.1)) 
+
+```
+
+### Description One
+
+While the employees who left are appearing in different clusters in relation to satisfaction level, most of them are with a satisfaction level less than 50%. Meanwhile, the employees who stayed have on average a higher satisfaction level.
+
+### Plot Two
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Two}
+ggplot(aes(salary,fill=left), data=df) + 
+  geom_bar(position = "fill") +
+  labs(title="Proportion of Employees who Left per Salary Group",
+        x ="Salary Group", y = "Proportion of Employees")
+```
+
+### Description Two
+It seems that the salary had an impact on the employees' decision to stay or leave: for  employees with higher salaries, the percentage of employees who left is much lower than the employees with medium or low salary. The medium salary group is also less likely to leave compared to the low salary group
+
+
+### Plot Three
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Three}
+ggplot(aes(x=satisfaction_level,y=last_evaluation, color=left), data=df) +
+  geom_jitter(alpha=1/5) +
+  facet_wrap(~number_project) +
+  labs(title="Satisfaction Level vs. Last Evaluation Score \n per Number of Employees' Projects",
+        x ="Satisfaction Level (0-1)", y = "Last Evaluation Score (0-1)") 
+
+ggplot(aes(x=satisfaction_level,y=last_evaluation, color=left), data=df) +
+  geom_jitter(alpha=1/5) +
+  facet_wrap(~time_spend_company) +
+  labs(title="Satisfaction Level vs. Last Evaluation Score \n per Time Spent in the Company (in Years)",
+        x ="Satisfaction Level (0-1)", y = "Last Evaluation Score (0-1)") 
+```
+
+### Description Three
+
+The employees who had the highest number of projects (6 or 7) are the ones who has the lowest satisfaction level but with high evaluation score. Most of these employees have left.
+Moreover, the employees who left with both high evaluation score and high satisfaction level are mostly employees for 5 or 6 years, which maybe can be explained by leaving because they hadn't been promoted.
+
+------
+
+# Reflection
+
+In this project, I explored the simulated HR Analytics Dataset, which contains 14999 observation of 10 variables, which aims to explains why employees leave their companies?
+I started by looking for individual variables and then the relationship between different variables to mainly answer the proposed question (of why employees leave) and also understand the distribution of satisfaction level across different categories of employees.
+Throughout my exploration, I suspect that lower satisfaction rate and lower salary, higher number of projects and not being promoted cause employees to leave their jobs. Howerver, I think the simulated data has limitations to make clear judgment in this regard, which I think is the main limitation of this dataset.
+If the source of the data is validated, I would like to analyze the data further using inferential statistics and build a prediction model.

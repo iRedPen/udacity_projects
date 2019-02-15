@@ -1,0 +1,17 @@
+Source: https://www.kaggle.com/ludobenistant/hr-analytics
+This dataset is simulated
+
+Human Resources Analytics
+Why are our best and most experienced employees leaving prematurely? 
+
+The dataset contains 14999 observations of 10 variables. Each row presents an employee and the variables are:
+satisfaction_level:Level of satisfaction (0-1)
+last_evaluation: Evaluation score for the employee (0-1)
+number_project: Number of projects completed while at work
+average_montly_hours: Average monthly hours at workplace
+time_spend_company: Number of years spent in the company
+Work_accident: Whether the employee had a workplace accident (1 or 0) 
+left: Whether the employee left the workplace or not (1 or 0) 
+promotion_last_5years: Whether the employee was promoted in the last five years (1 or 0) 
+sales: Department in which they work for
+salary: Relative level of salary (high) 

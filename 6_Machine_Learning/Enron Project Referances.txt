@@ -1,0 +1,16 @@
+Referances:
+https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.from_dict.html
+https://pandas.pydata.org/pandas-docs/stable/missing_data.html
+https://stackoverflow.com/questions/41680089/how-to-fillna-by-groupby-outputs-in-pandas
+https://www.shanelynn.ie/select-pandas-dataframe-rows-and-columns-using-iloc-loc-and-ix/#loc-selection
+http://scikit-learn.org/stable/modules/pipeline.html
+https://scikit-learn.org/stable/modules/grid_search.html
+https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
+https://www.kaggle.com/gautham11/building-a-scikit-learn-classification-pipeline
+https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html
+https://scikit-learn.org/stable/tutorial/statistical_inference/model_selection.html
+https://stackoverflow.com/questions/39839112/the-easiest-way-for-getting-feature-names-after-running-selectkbest-in-scikit-le/39847906
+http://queirozf.com/entries/scikit-learn-pipeline-examples
+https://scikit-learn.org/stable/modules/generated/sklearn.metrics.f1_score.html
+https://scikit-learn.org/stable/modules/cross_validation.html
+http://www.cse.chalmers.se/~richajo/dit865/files/Automatic%20hyperparameter%20tuning.html

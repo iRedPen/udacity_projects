@@ -1,0 +1,8 @@
+Referances:
+Human Resources Analytics's Dataset: https://www.kaggle.com/ludobenistant/hr-analytics
+Example Project: https://s3.amazonaws.com/content.udacity-data.com/courses/ud651/diamondsExample_2016-05.html
+R Style Guide: http://adv-r.had.co.nz/Style.html
+RStudio Cheat Sheets: https://www.rstudio.com/resources/cheatsheets/
+StackOverflow: https://stackoverflow.com/questions/11026016/ggplot-graphing-of-proportions-of-observations-within-categories
+
+
